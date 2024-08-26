@@ -1,0 +1,27 @@
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 5px;
+    margin: 20px auto;
+    max-width: 300px;
+    width: 100%;
+    aspect-ratio: 1;
+}
+
+.cell {
+    width: auto;
+    height: auto;
+    background-color: white;
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    cursor: pointer;
+    user-select: none;
+}
+
+.cell:hover {
+    background-color: grey;
+}
