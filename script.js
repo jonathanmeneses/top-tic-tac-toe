@@ -93,39 +93,34 @@ const createGame = (gameboard) => {
         // gameOver = false;
         gameboard.resetBoard();
 
-        console.log(`Welcome to Tic Tac Toe!`)
-        gameLoop();
+        document.getElementsByClassName('header')[0].innerHTML = 'Playing Tic Tac Toe!'
+        document.getElementById('playerTurn').innerHTML = `${currentPlayer.name}'s turn!`
 
     }
 
-    const gameLoop = () => {
-        while (gameboard.checkState() === 'Playing') {
-            playerTurn()
+    const playerTurn = (index) => {
+        document.getElementById('error').innerHTML = ''
+        if (!isNaN(index) && index >= 0 && index <= 8) {
+            let validMove = (gameboard.setCell(index, currentPlayer.marker));
         }
-        announceResult()
-        currentPlayer = playerX
-    }
 
-    const playerTurn = () => {
+        if (validMove) {
+            document.getElementById(`cell${index}`).textContent = currentPlayer.marker
 
-        console.log(`${currentPlayer.name}'s turn!`)
+            const gameState = gameboard.checkState();
 
-        gameboard.displayBoard();
-        let validMove = false;
-        while (!validMove) {
-            const index = parseInt(prompt(`${currentPlayer.name}, enter your move!`))
-            if (!isNaN(index) && index >= 0 && index <= 8) {
-                validMove = (gameboard.setCell(index, currentPlayer.marker))
+            if (gameState === 'Playing') {
+                // Switch player
+                currentPlayer = (currentPlayer === playerX ? playerO : playerX)
+                document.getElementById('playerTurn').innerHTML = `${currentPlayer.name}'s turn!`
             } else {
-                console.error("Invalid input! Please enter a number between 0 and 8.");
+                announceResult(gameState);
             }
-
         }
 
-        // Switch player
-        currentPlayer = (currentPlayer === playerX ? playerO : playerX)
-
-
+        else {
+            document.getElementById('error').innerHTML = `Error! Please place cell again!`
+        }
 
     }
 
@@ -134,20 +129,35 @@ const createGame = (gameboard) => {
     const announceResult = () => {
 
         let result = gameboard.checkState()
-
-        gameboard.displayBoard()
         if (result === 'Tie') {
-            console.log(`Oh no! It's a tie!`)
+            document.getElementById('header').innerHTML = `Oh no! It's a tie!`
         }
-
         else {
             const winner = (result === playerX.marker ? playerX : playerO)
-            console.log(`${winner.name} wins the game!`)
+            document.getElementById('header').innerHTML = `${winner.name} wins the game!`
         }
 
 
     }
 
 
-    return { playGame }
+    return { playGame, announceResult, playerTurn }
 };
+
+// Button Event Listeners
+
+function startGame() {
+    const game = createGame(gameboard);
+    game.playGame();
+}
+
+let startGameButton = document.getElementById("startGame")
+startGameButton.addEventListener("click", startGame);
+
+document.querySelectorAll('div .cell').forEach((element, index) => {
+
+    element.addEventListener("click", function () { playerTurn(index) }
+    );
+
+});
+
