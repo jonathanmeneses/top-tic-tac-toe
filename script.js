@@ -14,6 +14,9 @@ const gameboard = (function () {
 
     const resetBoard = () => {
         board.fill(null);
+        document.querySelectorAll(".cell").forEach(cell => {
+            cell.textcontent = ''
+        });
     }
 
     const setCell = (index, value) => {
@@ -96,12 +99,21 @@ const createGame = (gameboard) => {
         document.getElementsByClassName('header')[0].innerHTML = 'Playing Tic Tac Toe!'
         document.getElementById('playerTurn').innerHTML = `${currentPlayer.name}'s turn!`
 
+        document.querySelectorAll('div .cell').forEach((element, index) => {
+
+            element.removeEventListener("click", element.clickHandler); // Remove old listener
+            element.clickHandler = function () { playerTurn(index) }; // Store new listener
+            element.addEventListener("click", element.clickHandler); // Add new listener
+
+        });
+
     }
 
     const playerTurn = (index) => {
         document.getElementById('error').innerHTML = ''
+        let validMove = false
         if (!isNaN(index) && index >= 0 && index <= 8) {
-            let validMove = (gameboard.setCell(index, currentPlayer.marker));
+            validMove = (gameboard.setCell(index, currentPlayer.marker));
         }
 
         if (validMove) {
@@ -120,6 +132,7 @@ const createGame = (gameboard) => {
 
         else {
             document.getElementById('error').innerHTML = `Error! Please place cell again!`
+            return;
         }
 
     }
@@ -146,18 +159,17 @@ const createGame = (gameboard) => {
 
 // Button Event Listeners
 
+let game
+
 function startGame() {
-    const game = createGame(gameboard);
+    game = createGame(gameboard)
     game.playGame();
 }
+
+
 
 let startGameButton = document.getElementById("startGame")
 startGameButton.addEventListener("click", startGame);
 
-document.querySelectorAll('div .cell').forEach((element, index) => {
 
-    element.addEventListener("click", function () { playerTurn(index) }
-    );
-
-});
 
